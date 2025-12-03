@@ -1,8 +1,13 @@
-"""Provider implementations package."""
+"""LLM provider implementations."""
 
-from .base import LLMProvider
 from .openai import OpenAIProvider
 from .anthropic import AnthropicProvider
 from .azure_openai import AzureOpenAIProvider
+from .custom_llm import CustomLLMProvider
 
-__all__ = ["LLMProvider", "OpenAIProvider", "AnthropicProvider", "AzureOpenAIProvider"]
+__all__ = [
+    "OpenAIProvider",
+    "AnthropicProvider", 
+    "AzureOpenAIProvider",
+    "CustomLLMProvider",
+]

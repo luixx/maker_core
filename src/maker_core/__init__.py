@@ -26,7 +26,12 @@ from .types import (
     MakerConfig,
     AskOptions,
 )
-from .providers import OpenAIProvider, AnthropicProvider, AzureOpenAIProvider
+from .providers import (
+    OpenAIProvider,
+    AnthropicProvider,
+    AzureOpenAIProvider,
+    CustomLLMProvider,
+)
 
 __version__ = "1.0.0"
 
@@ -44,6 +49,7 @@ __all__ = [
     "OpenAIProvider",
     "AnthropicProvider",
     "AzureOpenAIProvider",
+    "CustomLLMProvider",
     # Types
     "Confidence",
     "RedFlagReason",
