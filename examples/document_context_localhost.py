@@ -5,6 +5,22 @@ import os
 from src.maker_core import Maker
 from src.maker_core.providers import CustomLLMProvider
 
+# ============================================================================
+# CONFIGURATION - Change these values for your LLM server
+# ============================================================================
+LLM_BASE_URL = "http://localhost:11434/v1"  # Ollama default
+LLM_MODEL = "llama2"                         # Model name
+LLM_TIMEOUT = 120                            # Timeout in seconds
+
+# Alternative configurations (commented out):
+# LLM_BASE_URL = "http://localhost:8000/v1"   # vLLM
+# LLM_MODEL = "meta-llama/Llama-2-7b-chat-hf"
+
+# LLM_BASE_URL = "http://localhost:1234/v1"   # LM Studio
+# LLM_MODEL = "local-model"
+# ============================================================================
+
+
 
 # Sample document content for demonstration
 SAMPLE_DOCUMENT = """
@@ -79,16 +95,16 @@ async def basic_example_ollama():
     print("Example 1: Basic Document Question (Ollama)")
     print("=" * 80)
     print()
-    print("Using Ollama on localhost:11434")
-    print("Make sure Ollama is running: ollama serve")
-    print("And a model is available: ollama pull llama2")
+    print(f"Using LLM at: {LLM_BASE_URL}")
+    
+    print(f"Model: {LLM_MODEL}")
     print()
     
     # Configure Ollama provider
     provider = CustomLLMProvider(
-        base_url="http://localhost:11434/v1",
-        model="llama2",
-        timeout=120  # Self-hosted models may need more time
+        base_url=LLM_BASE_URL,
+        model=LLM_MODEL,
+        timeout=LLM_TIMEOUT  # Self-hosted models may need more time
     )
     
     maker = Maker(provider=provider)
@@ -122,7 +138,7 @@ async def basic_example_vllm():
     print("Example 2: Basic Document Question (vLLM)")
     print("=" * 80)
     print()
-    print("Using vLLM on localhost:8000")
+    print(f"Using LLM at: {LLM_BASE_URL}")
     print("Start vLLM with:")
     print("  python -m vllm.entrypoints.openai.api_server \\")
     print("    --model meta-llama/Llama-2-7b-chat-hf \\")
@@ -131,9 +147,9 @@ async def basic_example_vllm():
     
     # Configure vLLM provider
     provider = CustomLLMProvider(
-        base_url="http://localhost:8000/v1",
-        model="meta-llama/Llama-2-7b-chat-hf",
-        timeout=120
+        base_url=LLM_BASE_URL,
+        model=LLM_MODEL,
+        timeout=LLM_TIMEOUT
     )
     
     maker = Maker(provider=provider)
@@ -165,9 +181,9 @@ async def complex_question_example():
     
     # Using Ollama (most common for local development)
     provider = CustomLLMProvider(
-        base_url="http://localhost:11434/v1",
-        model="llama2",
-        timeout=180  # More time for complex questions
+        base_url=LLM_BASE_URL,
+        model=LLM_MODEL,
+        timeout=LLM_TIMEOUT + 60  # More time for complex questions
     )
     
     maker = Maker(provider=provider)
@@ -241,8 +257,8 @@ async def multiple_documents_example():
     combined_context = f"{doc1}\n\n{doc2}"
     
     provider = CustomLLMProvider(
-        base_url="http://localhost:11434/v1",
-        model="llama2"
+        base_url=LLM_BASE_URL,
+        model=LLM_MODEL
     )
     
     maker = Maker(provider=provider)
@@ -310,8 +326,8 @@ Python Best Practices for 2024
     print(f"Loaded document ({len(document_content)} characters)\n")
     
     provider = CustomLLMProvider(
-        base_url="http://localhost:11434/v1",
-        model="llama2"
+        base_url=LLM_BASE_URL,
+        model=LLM_MODEL
     )
     
     maker = Maker(provider=provider)
@@ -350,9 +366,9 @@ async def lm_studio_example():
     print()
     
     provider = CustomLLMProvider(
-        base_url="http://localhost:1234/v1",
-        model="local-model",  # LM Studio uses generic model name
-        timeout=120
+        base_url=LLM_BASE_URL,
+        model=LLM_MODEL,  # LM Studio uses generic model name
+        timeout=LLM_TIMEOUT
     )
     
     maker = Maker(provider=provider)
@@ -399,24 +415,12 @@ async def main():
     print("  7. Run all examples")
     print()
     
-    # Configuration help
-    print("📝 Quick Configuration Guide:")
+    print(f"Current Configuration:")
+    print(f"  • Server: {LLM_BASE_URL}")
+    print(f"  • Model:  {LLM_MODEL}")
+    print(f"  • Timeout: {LLM_TIMEOUT}s")
     print()
-    print("Ollama (easiest):")
-    print("  • Install: https://ollama.ai/")
-    print("  • Run: ollama serve")
-    print("  • Pull model: ollama pull llama2")
-    print("  • URL: http://localhost:11434/v1")
-    print()
-    print("vLLM:")
-    print("  • Install: pip install vllm")
-    print("  • Run: python -m vllm.entrypoints.openai.api_server --model <model>")
-    print("  • URL: http://localhost:8000/v1")
-    print()
-    print("LM Studio:")
-    print("  • Download: https://lmstudio.ai/")
-    print("  • Start server from GUI")
-    print("  • URL: http://localhost:1234/v1")
+    print("📝 To change settings, edit the configuration at the top of this file.")
     print()
     
     choice = input("Choose example (1-7, or press Enter for Ollama example): ").strip()

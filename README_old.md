@@ -9,138 +9,11 @@ Based on the research paper: ["Solving a Million-Step LLM Task with Zero Errors"
 - **Maximal Agentic Decomposition (MAD)**: Automatically breaks complex questions into atomic sub-questions
 - **Consensus Voting**: Uses first-to-ahead-by-K algorithm to achieve reliable answers through redundancy
 - **Red-Flag Filtering**: Detects and filters unreliable LLM responses
-- **Multi-Provider Support**: Works with OpenAI, Anthropic Claude, Azure OpenAI, and Self-Hosted LLMs
+- **Multi-Provider Support**: Works with OpenAI, Anthropic Claude, and Azure OpenAI
 - **Event-Driven Architecture**: Track progress and monitor the pipeline in real-time
 - **Async & Sync Support**: Use async/await or synchronous interfaces
 - **Type-Safe**: Fully typed with mypy-compatible type hints
 - **Well-Tested**: Comprehensive test suite with pytest
-
-## 🧠 How MAKER Works (In Simple Terms)
-
-Think of MAKER as a **smart team manager** for AI questions. Here's how it ensures you get reliable, accurate answers:
-
-### The Problem MAKER Solves
-
-AI models can sometimes give incorrect or inconsistent answers, especially for complex questions. MAKER solves this by:
-
-1. **Breaking down complex questions** (like a good teacher)
-2. **Getting multiple opinions** (like consulting several experts)
-3. **Finding agreement** (like reaching consensus in a meeting)
-4. **Combining insights** (like writing a comprehensive report)
-
-### Step-by-Step: What Happens When You Ask a Question
-
-#### 🔍 **Step 1: Is This Question Simple or Complex?**
-```
-Your Question: "What are the benefits and challenges of AI in healthcare?"
-                              ↓
-MAKER thinks: "This has multiple parts - I should break it down!"
-              (Decomposition: TRUE)
-```
-
-**Simple question** → Answer directly  
-**Complex question** → Break it down first
-
----
-
-#### 🎯 **Step 2: Break It Down (If Needed)**
-```
-Original Question
-       ↓
-Sub-question 1: "What are the benefits of AI in healthcare?"
-Sub-question 2: "What are the challenges of AI in healthcare?"
-Sub-question 3: "What does the future hold for AI in healthcare?"
-```
-
-Think of it like **breaking a big homework assignment** into smaller, manageable tasks.
-
----
-
-#### 🗳️ **Step 3: Get Multiple Opinions (Voting)**
-For **each** sub-question, MAKER doesn't just accept the first answer. Instead:
-
-```
-Sub-question: "What are the benefits of AI in healthcare?"
-                              ↓
-Ask AI 5 times with slight variations:
-  Answer 1: "Improved diagnostics, efficiency..."  ✓
-  Answer 2: "Improved diagnostics, efficiency..."  ✓
-  Answer 3: "Better diagnosis, faster treatment..." ✓
-  Answer 4: "Improved diagnostics, efficiency..."  ✓
-  Answer 5: "Completely different answer..."       ✗ (filtered out)
-                              ↓
-Consensus reached! ✓ (Answer 1 appears most often)
-```
-
-This is like **asking multiple experts and seeing what they agree on** - much more reliable than trusting one opinion!
-
----
-
-#### 🎨 **Step 4: Combine Into Final Answer**
-```
-Sub-answer 1: Benefits explained
-Sub-answer 2: Challenges explained  
-Sub-answer 3: Future outlook
-              ↓
-Final Answer: Comprehensive response combining all parts
-```
-
-MAKER takes all the sub-answers and **writes them into one coherent, complete answer**.
-
----
-
-### 🛡️ Safety Features
-
-**Red-Flag Filtering**: MAKER automatically detects and ignores suspicious answers:
-- Answers that are way too long or too short
-- Answers that don't make sense
-- Answers that couldn't be parsed properly
-
-Think of it as a **quality control inspector** rejecting defective products.
-
----
-
-### 📊 Real Example
-
-**Your Question**: "Explain photosynthesis to a 10-year-old"
-
-```
-Step 1: Classification
-  ↳ Complexity: 3/10 (Simple enough!)
-  ↳ Decomposition: FALSE (No need to break down)
-
-Step 2: Voting (5 attempts)
-  ↳ Answer 1: "Plants use sunlight to make food..." ✓
-  ↳ Answer 2: "Plants use sunlight to make food..." ✓
-  ↳ Answer 3: "Photosynthesis is when plants..." ✓
-  ↳ Consensus reached after 3 rounds! ✓
-
-Step 3: Return answer
-  ↳ Confidence: HIGH
-  ↳ Final Answer: "Plants use sunlight to make food..."
-```
-
-**Total time**: ~10 seconds  
-**Reliability**: Much higher than a single AI call!
-
----
-
-### 💡 Why This Matters
-
-| Traditional AI Approach | MAKER Approach |
-|------------------------|----------------|
-| Ask once, hope it's right | Ask multiple times, find agreement |
-| Complex questions = confusing answers | Break down complex questions automatically |
-| No quality control | Built-in filtering and validation |
-| ~70-90% accuracy | ~95-99% accuracy on complex tasks |
-
-### ⚡ Performance Note
-
-- **Simple questions**: ~5-10 seconds (3-5 AI calls)
-- **Complex questions**: ~30-60 seconds (10-20 AI calls)
-- **Worth it?** YES! Much higher accuracy for critical tasks
-
-The trade-off is **speed vs. reliability** - MAKER chooses reliability.
 
 ## 📦 Installation
 
@@ -184,7 +57,6 @@ async def main():
     
     print(f"Answer: {result['answer']}")
     print(f"Confidence: {result['confidence']}")
-    print(f"Decomposition used: {result['decomposition_used']}")  # TRUE or FALSE
 
 asyncio.run(main())
 ```
@@ -256,20 +128,6 @@ provider = AzureOpenAIProvider(
 )
 ```
 
-### Self-Hosted LLMs (Ollama, vLLM, LM Studio, etc.)
-
-```python
-from maker_core.providers import CustomLLMProvider
-
-provider = CustomLLMProvider(
-    base_url="http://localhost:11434/v1",  # Ollama default
-    model="mistral:latest",
-    timeout=300
-)
-```
-
-See `LOCALHOST_LLM_GUIDE.md` for detailed setup instructions for self-hosted models.
-
 ## 📊 Event Tracking
 
 Monitor the MAKER pipeline with event listeners:
@@ -305,7 +163,7 @@ result = await maker.ask("Your question here")
 - `synthesisComplete`: Synthesis complete
 - `complete`: Full pipeline complete
 
-## �� Running Tests
+## 🧪 Running Tests
 
 ```bash
 # Run all tests
@@ -330,9 +188,6 @@ Check the `examples/` directory for detailed usage examples:
 - `azure_openai_example.py` - Azure OpenAI integration
 - `event_tracking.py` - Comprehensive event monitoring
 - `sync_usage.py` - Synchronous wrapper usage
-- `custom_llm_example.py` - Self-hosted LLMs (Ollama, vLLM, etc.)
-- `document_context_example.py` - Using documents as context
-- `document_context_localhost.py` - Document Q&A with self-hosted LLMs
 
 ## 🏗️ Architecture
 
@@ -360,7 +215,7 @@ Final Result
 - **RedFlagFilter**: Detects unreliable responses
 - **Providers**: Abstract LLM provider interface with multiple implementations
 
-## 🔬 Technical Details: How It Works
+## 🔬 How It Works
 
 ### 1. Classification
 

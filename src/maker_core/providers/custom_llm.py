@@ -86,6 +86,7 @@ class CustomLLMProvider(LLMProvider):
             "model": self.model,
             "messages": request["messages"],
             "temperature": request.get("temperature", 0.7),
+            "stream": False,  # Explicitly disable streaming
         }
 
         # Add optional parameters
