@@ -46,9 +46,9 @@ async def main():
     print(f"\n{'='*80}")
     print(f"Final Answer:\n{result['answer']}\n")
     print(f"Confidence: {result['confidence'].value}")
-    print(f"Sub-questions answered: {len(result['sub_results'])}")
+    print(f"Sub-questions answered: {len(result['sub_questions'])}")
     
-    for i, sub_result in enumerate(result['sub_results'], 1):
+    for i, sub_result in enumerate(result['sub_questions'], 1):
         print(f"\n  {i}. {sub_result['question']}")
         print(f"     Rounds: {sub_result['rounds_taken']}")
     

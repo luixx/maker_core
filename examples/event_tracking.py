@@ -45,7 +45,7 @@ async def main():
         print(f"   ⚠️  Red flags: {data['count']}")
     
     def on_synthesis_start(data):
-        print(f"\n🔧 Synthesizing {len(data['sub_results'])} sub-answers...")
+        print(f"\n🔧 Synthesizing {len(data['sub_questions'])} sub-answers...")
     
     def on_synthesis_complete(data):
         print("   ✓ Synthesis complete")

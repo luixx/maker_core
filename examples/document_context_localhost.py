@@ -213,11 +213,11 @@ async def complex_question_example():
         print("Final Answer:")
         print(result['answer'])
         print(f"\nConfidence: {result['confidence'].value}")
-        print(f"Sub-questions answered: {len(result['sub_results'])}")
+        print(f"Sub-questions answered: {len(result['sub_questions'])}")
         
-        if result['sub_results']:
+        if result['sub_questions']:
             print("\nSub-questions that were answered:")
-            for i, sub in enumerate(result['sub_results'], 1):
+            for i, sub in enumerate(result['sub_questions'], 1):
                 print(f"  {i}. {sub['question']}")
         print()
     except Exception as e:

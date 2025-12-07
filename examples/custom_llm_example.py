@@ -163,7 +163,7 @@ async def main():
         print(f"\n{'='*80}")
         print(f"Answer: {result2['answer']}")
         print(f"\nConfidence: {result2['confidence'].value}")
-        print(f"Sub-questions answered: {len(result2['sub_results'])}")
+        print(f"Sub-questions answered: {len(result2['sub_questions'])}")
         print(f"{'='*80}\n")
         
     except Exception as e:
