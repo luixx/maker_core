@@ -83,21 +83,21 @@ class DecompositionResult(TypedDict):
     classification: Classification
 
 
-class VoteCount(TypedDict):
-    """Vote count for a specific answer."""
-
-    answer: str
-    count: int
-
-
 class VotingResult(TypedDict):
-    """Result of voting process for a sub-question."""
+    """Result of voting process for a sub-question.
+    
+    Per MAKER paper, tracks both total votes attempted and valid votes counted,
+    as well as consensus status and vote statistics.
+    """
 
     answer: str
     consensus_reached: bool
-    vote_counts: List[VoteCount]
-    total_votes: int
-    red_flagged_count: int
+    vote_counts: Dict[str, int]  # normalized_answer -> count
+    rounds_taken: int  # Total voting rounds attempted
+    valid_votes: int  # Votes that weren't red-flagged
+    red_flags_encountered: int  # Votes that were red-flagged and discarded
+    winning_vote_count: int  # Number of votes for the winner
+    margin: int  # Winner votes - runner-up votes
 
 
 class SubQuestionResult(TypedDict):
@@ -106,18 +106,22 @@ class SubQuestionResult(TypedDict):
     question: str
     answer: str
     consensus_reached: bool
-    vote_counts: List[VoteCount]
-    total_votes: int
-    red_flagged_count: int
+    vote_counts: Dict[str, int]
+    rounds_taken: int
+    valid_votes: int
+    red_flags_encountered: int
+    confidence: NotRequired[str]  # "high", "medium", "low"
 
 
 class VotingStats(TypedDict):
     """Aggregated voting statistics across all sub-questions."""
 
     total_votes: int
+    valid_votes: int
     total_red_flagged: int
-    consensus_rate: float
-    avg_votes_per_question: float
+    winning_vote_count: int
+    margin: int
+    k: int  # The K value used for consensus
 
 
 class MakerResult(TypedDict):
@@ -128,7 +132,9 @@ class MakerResult(TypedDict):
     consensus_reached: bool
     is_decomposed: bool
     sub_questions: NotRequired[List[SubQuestionResult]]
+    synthesis_strategy: NotRequired[str]
     voting_stats: VotingStats
+    total_tokens: NotRequired[int]
     execution_time_ms: float
 
 
@@ -146,6 +152,20 @@ class RedFlagConfig(TypedDict, total=False):
     min_chars: int  # Flag responses below this character count
 
 
+class DecompositionConfig(TypedDict, total=False):
+    """Configuration for decomposition."""
+
+    enabled: bool
+    max_sub_questions: int
+
+
+class SynthesisConfig(TypedDict, total=False):
+    """Configuration for synthesis."""
+
+    enabled: bool
+    language: str
+
+
 class AzureConfig(TypedDict, total=False):
     """Configuration for Azure OpenAI."""
 
@@ -154,15 +174,32 @@ class AzureConfig(TypedDict, total=False):
     deployment: Optional[str]
 
 
-class MakerConfig(TypedDict):
-    """Configuration for the MAKER framework."""
+class MakerConfig(TypedDict, total=False):
+    """Configuration for the MAKER framework.
+    
+    Can accept either:
+    1. Provider string with API key (creates provider internally)
+    2. LLMProvider instance (uses directly)
+    """
 
-    provider: Union[str, LLMProvider]
-    api_key: str
-    model: str
+    # Provider configuration
+    provider: Union[str, "LLMProvider"]
+    api_key: NotRequired[str]
+    model: NotRequired[str]
+    base_url: NotRequired[str]
+    
+    # Component configurations
     voting: NotRequired[VotingConfig]
     red_flags: NotRequired[RedFlagConfig]
+    decomposition: NotRequired[DecompositionConfig]
+    synthesis: NotRequired[SynthesisConfig]
     azure: NotRequired[AzureConfig]
+    
+    # Simple config options (backwards compatibility)
+    voting_threshold: NotRequired[int]
+    max_voting_rounds: NotRequired[int]
+    max_sub_questions: NotRequired[int]
+    enable_red_flag_filter: NotRequired[bool]
 
 
 class AskOptions(TypedDict, total=False):
@@ -170,6 +207,7 @@ class AskOptions(TypedDict, total=False):
 
     context: str
     max_sub_questions: int
+    k: int  # Override K value for this question
 
 
 class RedFlagReason(str, Enum):

@@ -1,168 +1,34 @@
-# maker-core 🎯
+# MAKER-Core
 
-A Python implementation of the **MAKER** (MAximizing DEcomposition and Redundancy) algorithm for achieving highly reliable responses from Large Language Models (LLMs).
+A Python implementation of the **MAKER algorithm** (MAximizing DEcomposition and Redundancy) for reliable LLM responses.
 
-Based on the research paper: ["Solving a Million-Step LLM Task with Zero Errors"](https://arxiv.org/abs/2511.09030) by Zheng et al. (2024).
+Based on the paper: ["Solving a Million-Step LLM Task with Zero Errors"](https://arxiv.org/abs/2511.09030) by Zheng et al. (2024)
 
-## 🌟 Features
+Original TypeScript implementation: [github.com/Gatos90/maker](https://github.com/Gatos90/maker)
 
-- **Maximal Agentic Decomposition (MAD)**: Automatically breaks complex questions into atomic sub-questions
-- **Consensus Voting**: Uses first-to-ahead-by-K algorithm to achieve reliable answers through redundancy
-- **Red-Flag Filtering**: Detects and filters unreliable LLM responses
-- **Multi-Provider Support**: Works with OpenAI, Anthropic Claude, Azure OpenAI, and Self-Hosted LLMs
-- **Event-Driven Architecture**: Track progress and monitor the pipeline in real-time
-- **Async & Sync Support**: Use async/await or synchronous interfaces
-- **Type-Safe**: Fully typed with mypy-compatible type hints
-- **Well-Tested**: Comprehensive test suite with pytest
+## Features
 
-## 🧠 How MAKER Works (In Simple Terms)
+- **Maximal Agentic Decomposition (MAD)** - Breaks complex questions into atomic sub-questions
+- **First-to-ahead-by-K Voting** - Consensus-based answers using Algorithm 2 from the paper
+- **Red-flag Filtering** - Detects unreliable responses (too long, too short, parse failures)
+- **Multiple LLM Providers** - OpenAI, Anthropic, Azure OpenAI, and custom/local LLMs
+- **Robust Parsing** - Works with both strict JSON APIs and flexible local LLMs
 
-Think of MAKER as a **smart team manager** for AI questions. Here's how it ensures you get reliable, accurate answers:
-
-### The Problem MAKER Solves
-
-AI models can sometimes give incorrect or inconsistent answers, especially for complex questions. MAKER solves this by:
-
-1. **Breaking down complex questions** (like a good teacher)
-2. **Getting multiple opinions** (like consulting several experts)
-3. **Finding agreement** (like reaching consensus in a meeting)
-4. **Combining insights** (like writing a comprehensive report)
-
-### Step-by-Step: What Happens When You Ask a Question
-
-#### 🔍 **Step 1: Is This Question Simple or Complex?**
-```
-Your Question: "What are the benefits and challenges of AI in healthcare?"
-                              ↓
-MAKER thinks: "This has multiple parts - I should break it down!"
-              (Decomposition: TRUE)
-```
-
-**Simple question** → Answer directly  
-**Complex question** → Break it down first
-
----
-
-#### 🎯 **Step 2: Break It Down (If Needed)**
-```
-Original Question
-       ↓
-Sub-question 1: "What are the benefits of AI in healthcare?"
-Sub-question 2: "What are the challenges of AI in healthcare?"
-Sub-question 3: "What does the future hold for AI in healthcare?"
-```
-
-Think of it like **breaking a big homework assignment** into smaller, manageable tasks.
-
----
-
-#### 🗳️ **Step 3: Get Multiple Opinions (Voting)**
-For **each** sub-question, MAKER doesn't just accept the first answer. Instead:
-
-```
-Sub-question: "What are the benefits of AI in healthcare?"
-                              ↓
-Ask AI 5 times with slight variations:
-  Answer 1: "Improved diagnostics, efficiency..."  ✓
-  Answer 2: "Improved diagnostics, efficiency..."  ✓
-  Answer 3: "Better diagnosis, faster treatment..." ✓
-  Answer 4: "Improved diagnostics, efficiency..."  ✓
-  Answer 5: "Completely different answer..."       ✗ (filtered out)
-                              ↓
-Consensus reached! ✓ (Answer 1 appears most often)
-```
-
-This is like **asking multiple experts and seeing what they agree on** - much more reliable than trusting one opinion!
-
----
-
-#### 🎨 **Step 4: Combine Into Final Answer**
-```
-Sub-answer 1: Benefits explained
-Sub-answer 2: Challenges explained  
-Sub-answer 3: Future outlook
-              ↓
-Final Answer: Comprehensive response combining all parts
-```
-
-MAKER takes all the sub-answers and **writes them into one coherent, complete answer**.
-
----
-
-### 🛡️ Safety Features
-
-**Red-Flag Filtering**: MAKER automatically detects and ignores suspicious answers:
-- Answers that are way too long or too short
-- Answers that don't make sense
-- Answers that couldn't be parsed properly
-
-Think of it as a **quality control inspector** rejecting defective products.
-
----
-
-### 📊 Real Example
-
-**Your Question**: "Explain photosynthesis to a 10-year-old"
-
-```
-Step 1: Classification
-  ↳ Complexity: 3/10 (Simple enough!)
-  ↳ Decomposition: FALSE (No need to break down)
-
-Step 2: Voting (5 attempts)
-  ↳ Answer 1: "Plants use sunlight to make food..." ✓
-  ↳ Answer 2: "Plants use sunlight to make food..." ✓
-  ↳ Answer 3: "Photosynthesis is when plants..." ✓
-  ↳ Consensus reached after 3 rounds! ✓
-
-Step 3: Return answer
-  ↳ Confidence: HIGH
-  ↳ Final Answer: "Plants use sunlight to make food..."
-```
-
-**Total time**: ~10 seconds  
-**Reliability**: Much higher than a single AI call!
-
----
-
-### 💡 Why This Matters
-
-| Traditional AI Approach | MAKER Approach |
-|------------------------|----------------|
-| Ask once, hope it's right | Ask multiple times, find agreement |
-| Complex questions = confusing answers | Break down complex questions automatically |
-| No quality control | Built-in filtering and validation |
-| ~70-90% accuracy | ~95-99% accuracy on complex tasks |
-
-### ⚡ Performance Note
-
-- **Simple questions**: ~5-10 seconds (3-5 AI calls)
-- **Complex questions**: ~30-60 seconds (10-20 AI calls)
-- **Worth it?** YES! Much higher accuracy for critical tasks
-
-The trade-off is **speed vs. reliability** - MAKER chooses reliability.
-
-## 📦 Installation
+## Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/maker-core.git
-cd maker-core
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Install in development mode
 pip install -e .
 ```
 
-## 🚀 Quick Start
+Or install dependencies directly:
 
-### Basic Usage with OpenAI
+```bash
+pip install aiohttp openai anthropic
+```
+
+## Quick Start
+
+### With OpenAI
 
 ```python
 import asyncio
@@ -170,21 +36,36 @@ from maker_core import Maker
 from maker_core.providers import OpenAIProvider
 
 async def main():
-    # Initialize provider
-    provider = OpenAIProvider(
-        api_key="your-openai-api-key",
-        model="gpt-4"
-    )
-    
-    # Create Maker instance
+    provider = OpenAIProvider(api_key="your-key", model="gpt-4")
     maker = Maker(provider=provider)
     
-    # Ask a question
-    result = await maker.ask("What are the main causes of climate change?")
+    result = await maker.ask("What causes climate change?")
+    print(result["answer"])
+    print(result["confidence"])  # HIGH, MEDIUM, or LOW
+
+asyncio.run(main())
+```
+
+### With Local LLMs (Ollama, vLLM, LM Studio)
+
+```python
+import asyncio
+from maker_core import Maker
+from maker_core.providers import CustomLLMProvider
+
+async def main():
+    provider = CustomLLMProvider(
+        base_url="http://localhost:11434/v1",  # Ollama
+        model="mistral:latest",
+        timeout=300
+    )
+    maker = Maker(provider=provider)
     
-    print(f"Answer: {result['answer']}")
-    print(f"Confidence: {result['confidence']}")
-    print(f"Decomposition used: {result['decomposition_used']}")  # TRUE or FALSE
+    result = await maker.ask(
+        "What is photosynthesis?",
+        options={"context": "Your document text here..."}
+    )
+    print(result["answer"])
 
 asyncio.run(main())
 ```
@@ -198,220 +79,215 @@ from maker_core.providers import OpenAIProvider
 provider = OpenAIProvider(api_key="your-key", model="gpt-4")
 maker = MakerSync(provider=provider)
 
-result = maker.ask("What is photosynthesis?")
-print(result['answer'])
+result = maker.ask("What is the speed of light?")
+print(result["answer"])
 ```
 
-## 🎛️ Configuration
+## How It Works
 
-Customize MAKER's behavior with configuration options:
+### Algorithm 2: First-to-ahead-by-K Voting
 
-```python
-from maker_core import Maker, MakerConfig
+The core voting algorithm from the MAKER paper:
 
-config = MakerConfig(
-    voting_threshold=5,          # Votes ahead needed for consensus
-    max_voting_rounds=15,        # Maximum voting attempts
-    max_sub_questions=4,         # Max sub-questions per decomposition
-    enable_red_flag_filter=True  # Enable response filtering
-)
-
-maker = Maker(provider=provider, config=config)
+```
+while True:
+    y = get_vote(x, M)      # Sample answer from LLM
+    V[y] = V[y] + 1         # Increment vote count
+    if V[y] >= k + max(V[v] for v != y):  # Check consensus
+        return y
 ```
 
-## 🔌 Supported Providers
+**Key insight**: The winner must be **K votes AHEAD** of the runner-up, not just have K total votes.
 
-### OpenAI
+Example with K=2:
+- If answer A has 3 votes and answer B has 1 vote → A wins (3 >= 2 + 1)
+- If answer A has 3 votes and answer B has 2 votes → Continue voting (3 < 2 + 2)
 
-```python
-from maker_core.providers import OpenAIProvider
+### Red-flag Filtering (Section 3.3)
 
-provider = OpenAIProvider(
-    api_key="your-api-key",
-    model="gpt-4",  # or "gpt-4-turbo", "gpt-3.5-turbo"
-)
-```
+Responses are filtered out if they:
+- Are too long (>750 tokens / ~3000 characters)
+- Are too short (<5 characters)
+- Failed to parse (for structured responses)
 
-### Anthropic Claude
+### Question Decomposition
 
-```python
-from maker_core.providers import AnthropicProvider
+Complex questions are automatically broken down into simpler sub-questions that can be answered independently, then synthesized into a final answer.
 
-provider = AnthropicProvider(
-    api_key="your-api-key",
-    model="claude-3-5-sonnet-20241022"
-)
-```
-
-### Azure OpenAI
+## Configuration
 
 ```python
-from maker_core.providers import AzureOpenAIProvider
+from maker_core import Maker
 
-provider = AzureOpenAIProvider(
-    api_key="your-api-key",
-    azure_endpoint="https://your-resource.openai.azure.com",
-    api_version="2024-10-21",
-    deployment_name="your-deployment"
-)
-```
-
-### Self-Hosted LLMs (Ollama, vLLM, LM Studio, etc.)
-
-```python
-from maker_core.providers import CustomLLMProvider
-
-provider = CustomLLMProvider(
-    base_url="http://localhost:11434/v1",  # Ollama default
-    model="mistral:latest",
-    timeout=300
+maker = Maker(
+    provider=provider,
+    config={
+        # Voting configuration
+        "voting": {
+            "k": 2,              # Votes ahead needed for consensus
+            "max_rounds": 10,   # Maximum voting rounds
+        },
+        # Red-flag filtering
+        "red_flags": {
+            "max_tokens": 750,   # Max answer length in tokens
+            "min_length": 5,     # Minimum answer length in chars
+        },
+        # Decomposition
+        "max_sub_questions": 5,  # Max sub-questions for complex queries
+    }
 )
 ```
 
-See `LOCALHOST_LLM_GUIDE.md` for detailed setup instructions for self-hosted models.
+## Result Structure
 
-## 📊 Event Tracking
+### MakerResult
 
-Monitor the MAKER pipeline with event listeners:
+```python
+{
+    "answer": str,              # Final answer
+    "confidence": Confidence,   # HIGH, MEDIUM, or LOW
+    "is_decomposed": bool,      # Whether question was decomposed
+    "sub_results": [...],       # Results for each sub-question
+    "voting_stats": {...},      # Aggregated voting statistics
+    "total_votes": int,         # Total votes across all sub-questions
+    "total_red_flags": int,     # Total red flags encountered
+}
+```
+
+### VotingResult
+
+```python
+{
+    "answer": str,                  # Winning answer
+    "consensus_reached": bool,      # Whether K-ahead consensus was reached
+    "vote_counts": {str: int},      # Votes per normalized answer
+    "rounds_taken": int,            # Total voting rounds
+    "valid_votes": int,             # Votes not filtered by red-flags
+    "red_flags_encountered": int,   # Filtered responses count
+    "winning_vote_count": int,      # Votes for winning answer
+    "margin": int,                  # Lead over runner-up
+}
+```
+
+## Event Tracking
+
+Track the MAKER process with event listeners:
 
 ```python
 maker = Maker(provider=provider)
 
-# Track decomposition
-maker.on("decomposed", lambda data: 
-    print(f"Decomposed into {data['count']} sub-questions"))
-
-# Track voting progress
-maker.on("voteProgress", lambda data:
-    print(f"Round {data['round']}: {data['vote_counts']}"))
-
-# Track completion
-maker.on("complete", lambda data:
-    print(f"Confidence: {data['confidence']}"))
+maker.on("classificationStart", lambda d: print("Classifying..."))
+maker.on("classificationComplete", lambda d: print(f"Needs decomposition: {d['needs_decomposition']}"))
+maker.on("decomposed", lambda d: print(f"Split into {d['count']} sub-questions"))
+maker.on("votingStart", lambda d: print(f"Voting on: {d['question'][:50]}..."))
+maker.on("vote", lambda d: print(f"Vote {d['round']}: {d['answer'][:30]}..."))
+maker.on("votingComplete", lambda d: print(f"Consensus: {d['consensusReached']}"))
+maker.on("synthesisStart", lambda d: print("Synthesizing..."))
+maker.on("synthesisComplete", lambda d: print("Done!"))
+maker.on("error", lambda d: print(f"Error: {d['error']}"))
 
 result = await maker.ask("Your question here")
 ```
 
 ### Available Events
 
-- `decompositionStart`: Decomposition begins
-- `classificationComplete`: Question classified
-- `decomposed`: Sub-questions generated
-- `votingStart`: Voting begins for a sub-question
-- `voteProgress`: Each voting round update
-- `votingComplete`: Consensus reached
-- `redFlagged`: Red flags detected
-- `synthesisStart`: Synthesis begins
-- `synthesisComplete`: Synthesis complete
-- `complete`: Full pipeline complete
+| Event | Data | Description |
+|-------|------|-------------|
+| `classificationStart` | `{question}` | Starting question classification |
+| `classificationComplete` | `{needs_decomposition, complexity_score}` | Classification finished |
+| `decomposed` | `{count, sub_questions}` | Question decomposed |
+| `votingStart` | `{question}` | Starting voting on a question |
+| `vote` | `{round, answer, redFlag}` | Individual vote cast |
+| `votingComplete` | `{answer, rounds, consensusReached}` | Voting finished |
+| `synthesisStart` | `{count}` | Starting answer synthesis |
+| `synthesisComplete` | `{answer}` | Synthesis finished |
+| `error` | `{error, phase}` | Error occurred |
 
-## �� Running Tests
+## Providers
 
-```bash
-# Run all tests
-pytest
-
-# Run with coverage
-pytest --cov=src/maker_core --cov-report=html
-
-# Run specific test file
-pytest tests/test_maker.py
-
-# Run with verbose output
-pytest -v
+### OpenAI
+```python
+from maker_core.providers import OpenAIProvider
+provider = OpenAIProvider(api_key="sk-...", model="gpt-4")
 ```
 
-## 📚 Examples
+### Anthropic
+```python
+from maker_core.providers import AnthropicProvider
+provider = AnthropicProvider(api_key="sk-ant-...", model="claude-3-sonnet-20240229")
+```
 
-Check the `examples/` directory for detailed usage examples:
+### Azure OpenAI
+```python
+from maker_core.providers import AzureOpenAIProvider
+provider = AzureOpenAIProvider(
+    api_key="...",
+    endpoint="https://your-resource.openai.azure.com",
+    deployment="gpt-4",
+    api_version="2024-02-15-preview"
+)
+```
+
+### Custom/Local LLMs
+```python
+from maker_core.providers import CustomLLMProvider
+provider = CustomLLMProvider(
+    base_url="http://localhost:11434/v1",  # Ollama, vLLM, LM Studio, etc.
+    model="mistral:latest",
+    timeout=300  # Increase for large models
+)
+```
+
+## Running Tests
+
+```bash
+# Install test dependencies
+pip install pytest pytest-asyncio pytest-cov
+
+# Run all tests
+pytest tests/ -v
+
+# Run with coverage
+pytest tests/ -v --cov=src/maker_core --cov-report=term-missing
+```
+
+## Examples
+
+See the `examples/` directory for complete examples:
 
 - `basic_openai.py` - Basic usage with OpenAI
 - `anthropic_example.py` - Using Anthropic Claude
 - `azure_openai_example.py` - Azure OpenAI integration
-- `event_tracking.py` - Comprehensive event monitoring
-- `sync_usage.py` - Synchronous wrapper usage
-- `custom_llm_example.py` - Self-hosted LLMs (Ollama, vLLM, etc.)
-- `document_context_example.py` - Using documents as context
-- `document_context_localhost.py` - Document Q&A with self-hosted LLMs
+- `custom_llm_example.py` - Local LLM with Ollama
+- `document_context_example.py` - Using document context
+- `document_context_localhost.py` - Document context with local LLMs
+- `event_tracking.py` - Tracking MAKER events
+- `sync_usage.py` - Synchronous API usage
 
-## 🏗️ Architecture
-
-### Pipeline Flow
+## Architecture
 
 ```
-User Question
-    ↓
-[Classification] → Determine complexity
-    ↓
-[Decomposition] → Break into sub-questions (if needed)
-    ↓
-[Voting] → Consensus for each sub-question
-    ↓
-[Synthesis] → Combine into final answer
-    ↓
-Final Result
+maker_core/
+├── __init__.py           # Package exports
+├── maker.py              # Main Maker and MakerSync classes
+├── decomposer.py         # Question decomposition (MAD)
+├── voting_engine.py      # First-to-ahead-by-K voting
+├── synthesizer.py        # Answer synthesis
+├── red_flag_filter.py    # Response filtering
+├── types.py              # TypedDict definitions
+└── providers/
+    ├── base.py           # Abstract LLMProvider
+    ├── openai.py         # OpenAI provider
+    ├── anthropic.py      # Anthropic provider
+    ├── azure_openai.py   # Azure OpenAI provider
+    └── custom_llm.py     # Custom/local LLM provider
 ```
 
-### Key Components
+## License
 
-- **Decomposer**: Implements Maximal Agentic Decomposition (MAD)
-- **VotingEngine**: First-to-ahead-by-K consensus algorithm
-- **Synthesizer**: Combines sub-answers coherently
-- **RedFlagFilter**: Detects unreliable responses
-- **Providers**: Abstract LLM provider interface with multiple implementations
+MIT License - See LICENSE file for details.
 
-## 🔬 Technical Details: How It Works
+## References
 
-### 1. Classification
-
-MAKER first classifies the question complexity (1-10 scale). Questions with complexity ≥ 6 undergo decomposition.
-
-### 2. Decomposition
-
-Complex questions are broken into 2-5 atomic sub-questions that can be answered independently.
-
-### 3. Consensus Voting
-
-For each sub-question, MAKER uses the **first-to-ahead-by-K** algorithm:
-- Samples multiple answers with varying temperature
-- Continues until one answer is K votes ahead
-- Filters out "red-flagged" responses (too long/short, parse failures)
-
-### 4. Synthesis
-
-Sub-answers are combined by the LLM into a coherent final response.
-
-## 📈 Performance
-
-Based on the original paper, MAKER achieves:
-- **Near-zero error rates** on complex multi-step tasks
-- **High reliability** through consensus voting
-- **Efficient decomposition** of complex problems
-- **Scalable** to million-step tasks
-
-## 🤝 Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Original MAKER paper: [Zheng et al. (2024)](https://arxiv.org/abs/2511.09030)
-- JavaScript implementation: [@sittingduck/maker-core](https://www.npmjs.com/package/@sittingduck/maker-core)
-
-## 📮 Contact
-
-For questions, issues, or suggestions, please [open an issue](https://github.com/yourusername/maker-core/issues) on GitHub.
-
----
-
-**Note**: This is a research implementation. For production use, ensure proper API rate limiting, error handling, and cost management.
+- Paper: [Solving a Million-Step LLM Task with Zero Errors](https://arxiv.org/abs/2511.09030)
+- Original Implementation: [github.com/Gatos90/maker](https://github.com/Gatos90/maker)

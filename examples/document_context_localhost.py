@@ -121,7 +121,7 @@ async def basic_example_ollama():
         
         print(f"Answer: {result['answer']}\n")
         print(f"Confidence: {result['confidence'].value}")
-        print(f"Decomposition used: {result['decomposition_used']}")
+        print(f"Decomposition used: {result['is_decomposed']}")
         print()
     except Exception as e:
         print(f"❌ Error: {e}")

@@ -16,7 +16,8 @@ async def test_decomposer_simple_question():
     }
     """
     
-    provider = MockProvider({"complexity": classification_response.strip()})
+    # Use "capital" as keyword since it's in the question
+    provider = MockProvider({"capital": classification_response.strip()})
     decomposer = Decomposer(provider)
     
     result = await decomposer.decompose("What is the capital of France?")
@@ -56,10 +57,31 @@ async def test_decomposer_complex_question():
     }
     """
     
+    # The MockProvider matches keywords in the user message.
+    # For classification, the user message is "Question: What factors..."
+    # For decomposition, the user message is "Original Question: What factors..."
+    # Both contain "factors" and "Roman Empire", so we can use those
     provider = MockProvider({
-        "complexity": classification_response.strip(),
-        "original question": decomposition_response.strip(),
+        "Roman Empire": classification_response.strip(),
     })
+    # Override the default response for decomposition since both calls match the same keyword
+    # We need a smarter way to distinguish the calls
+    
+    # Alternative: Use a stateful mock
+    call_count = [0]
+    original_complete = provider.complete
+    
+    async def stateful_complete(request):
+        call_count[0] += 1
+        if call_count[0] == 1:
+            # First call: classification
+            provider.responses = {"Roman Empire": classification_response.strip()}
+        else:
+            # Second call: decomposition
+            provider.responses = {"Roman Empire": decomposition_response.strip()}
+        return await original_complete.__func__(provider, request)
+    
+    provider.complete = stateful_complete
     decomposer = Decomposer(provider, max_sub_questions=5)
     
     result = await decomposer.decompose(
@@ -95,10 +117,20 @@ async def test_decomposer_respects_max_sub_questions():
     }
     """
     
-    provider = MockProvider({
-        "complexity": classification_response.strip(),
-        "original": decomposition_response.strip(),
-    })
+    # Stateful mock to return different responses
+    call_count = [0]
+    provider = MockProvider({"Complex": classification_response.strip()})
+    original_complete = provider.complete
+    
+    async def stateful_complete(request):
+        call_count[0] += 1
+        if call_count[0] == 1:
+            provider.responses = {"Complex": classification_response.strip()}
+        else:
+            provider.responses = {"Complex": decomposition_response.strip()}
+        return await original_complete.__func__(provider, request)
+    
+    provider.complete = stateful_complete
     decomposer = Decomposer(provider, max_sub_questions=3)
     
     result = await decomposer.decompose("Complex question?")

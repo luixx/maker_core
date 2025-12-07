@@ -18,6 +18,13 @@ class TestProviderInterface:
         """Test JSON extraction from markdown blocks."""
         from src.maker_core.providers.base import LLMProvider
         
+        # Create a concrete implementation to test the method
+        class TestProvider(LLMProvider):
+            async def complete(self, request):
+                pass
+        
+        provider = TestProvider()
+        
         content_with_markdown = """```json
 {
     "answer": "Paris",
@@ -25,14 +32,16 @@ class TestProviderInterface:
 }
 ```"""
         
-        result = LLMProvider._extract_json_content(None, content_with_markdown)
-        assert '"answer"' in result
-        assert '"Paris"' in result
-        assert '```' not in result
+        result = provider._extract_json_content(content_with_markdown)
+        # Result should be a parsed dict
+        assert isinstance(result, dict)
+        assert result["answer"] == "Paris"
+        assert result["confidence"] == 0.95
         
         plain_json = '{"answer": "Paris"}'
-        result = LLMProvider._extract_json_content(None, plain_json)
-        assert result == plain_json
+        result = provider._extract_json_content(plain_json)
+        assert isinstance(result, dict)
+        assert result["answer"] == "Paris"
 
 
 def test_openai_provider_exists():

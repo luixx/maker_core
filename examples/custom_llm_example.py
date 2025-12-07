@@ -146,7 +146,7 @@ async def main():
         print(f"\n{'='*80}")
         print(f"Answer: {result['answer']}")
         print(f"\nConfidence: {result['confidence'].value}")
-        print(f"Decomposition used: {result['decomposition_used']}")
+        print(f"Decomposition used: {result['is_decomposed']}")
         print(f"Total voting rounds: {result['total_voting_rounds']}")
         print(f"{'='*80}\n")
         

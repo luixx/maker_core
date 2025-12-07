@@ -101,7 +101,7 @@ async def basic_example():
     
     print(f"Answer: {result['answer']}\n")
     print(f"Confidence: {result['confidence'].value}")
-    print(f"Decomposition used: {result['decomposition_used']}")
+    print(f"Decomposition used: {result['is_decomposed']}")
     print()
 
 
